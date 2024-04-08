@@ -1,7 +1,5 @@
 #include "info2.h"
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
 
 using namespace std;
 
@@ -39,22 +37,31 @@ int determinarTamanoMatriz(int mayor) {
 }
 
 // Función para crear una matriz con números desde 1 hasta el tamaño y 0 en el centro
-void crearMatriz(int matriz[][MAX_NUMEROS], int tamano, int filaInicial, int columnaInicial) {
-    int contador = 1;
-    // Rellenar la matriz con números del 1 al tamaño desde la posición inicial
+void crearMatriz(int**& matriz, int tamano) {
+    matriz = new int*[tamano];
     for (int i = 0; i < tamano; ++i) {
+        matriz[i] = new int[tamano];
         for (int j = 0; j < tamano; ++j) {
-            matriz[i][j] = contador++;
+            if (i == tamano / 2 && j == tamano / 2) {
+                matriz[i][j] = 0;
+            } else {
+                matriz[i][j] = (i * tamano) + j + 1;
+            }
         }
     }
-    // Colocar 0 en el centro de la matriz
-    int centro = tamano / 2;
-    matriz[centro][centro] = 0;
 }
 
+// Función para liberar la memoria ocupada por la matriz
+void liberarMatriz(int**& matriz, int tamano) {
+    for (int i = 0; i < tamano; ++i) {
+        delete[] matriz[i];
+    }
+    delete[] matriz;
+    matriz = nullptr;
+}
 
 // Función para imprimir una matriz
-void imprimirMatriz(int matriz[][MAX_NUMEROS], int tamano) {
+void imprimirMatriz(int** matriz, int tamano) {
     for (int i = 0; i < tamano; ++i) {
         for (int j = 0; j < tamano; ++j) {
             cout << matriz[i][j] << " ";
@@ -64,8 +71,12 @@ void imprimirMatriz(int matriz[][MAX_NUMEROS], int tamano) {
 }
 
 // Función para girar la matriz en sentido horario según el ángulo dado (en grados)
-void girarMatriz(int matriz[][MAX_NUMEROS], int tamano, int grados) {
-    int temp[MAX_NUMEROS][MAX_NUMEROS];
+void girarMatriz(int**& matriz, int tamano, int grados) {
+    int** temp = new int*[tamano];
+    for (int i = 0; i < tamano; ++i) {
+        temp[i] = new int[tamano];
+    }
+
     int vueltas = grados / 90;
 
     // Copiar la matriz original en una temporal
@@ -89,25 +100,13 @@ void girarMatriz(int matriz[][MAX_NUMEROS], int tamano, int grados) {
             }
         }
     }
+
+    // Liberar la memoria de la matriz temporal
+    for (int i = 0; i < tamano; ++i) {
+        delete[] temp[i];
+    }
+    delete[] temp;
 }
 
-// Función para rotar una matriz 90° en sentido horario
-void rotarMatriz90(int matriz[][MAX_NUMEROS], int tamano) {
-    int temp[MAX_NUMEROS][MAX_NUMEROS];
-
-    // Copiar la matriz original en una temporal
-    for (int i = 0; i < tamano; ++i) {
-        for (int j = 0; j < tamano; ++j) {
-            temp[i][j] = matriz[i][j];
-        }
-    }
-
-    // Girar la matriz original 90°
-    for (int i = 0; i < tamano; ++i) {
-        for (int j = 0; j < tamano; ++j) {
-            matriz[j][tamano - 1 - i] = temp[i][j];
-        }
-    }
-}
 
 
